@@ -32,10 +32,18 @@
 		$pwHash = $line['password_hash'];
 
 		$checkHash = SHA1($salt . $password);
-
+		
 		if($checkHash == $pwHash)
 		{
-			echo '{"success":1}';
+			pg_prepare($dbconn,"get_firstname", "Select firstname FROM user_info where email = $1")
+				or die("Prepare statement for getting user first name failed: " . pg_last_error());
+			$firstnameResult = pg_execute($dbconn,"get_firstname", array($email)) or die("Execte statement failed getting first name: " . pg_last_error());
+			$line = pg_fetch_array($firstnameResult, null, PGSQL_ASSOC);
+			$firstname = $line['firstname'];
+			$firstname = json_encode($line['firstname']);
+	
+			echo '{"success":1, "firstname":'.$firstname.'}';
+					
 		}
 		else
 		{
