@@ -7,7 +7,7 @@
 	$key = "AIzaSyCmM8yC1X_fOgLqv5TV2nPaXxgPuBGyRmc";
 	$gps = $_POST['gps'];
 	$email = $_POST['email'];
-	
+	$distance = $_POST['distance'];	
 	$coords = explode(",",$gps);
 	
 	$lat =$coords[0];
@@ -15,7 +15,7 @@
 
 	
 	
-	$url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$lat,$lng&radius=500&rankBy=distance&types=restaurant&openNow=true&key=$key";
+	$url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$lat,$lng&radius=500&rankBy=$distance&types=restaurant&openNow=true&key=$key";
 	
 	$i = 0;
 
@@ -56,11 +56,6 @@
 	}
 */	
 
-		$restLat = $obj['results'][$i]['geometry']['location']['lat'];
-		$restLng = $obj['results'][$i]['geometry']['location']['lng'];
-		$restName = $obj['results'][$i]['name'];
-		$placeID = $obj['results'][$i]['place_id'];	
-
 	/*	
 		pg_prepare($dbconn,"check_if_exists", "Select rid, name FROM Restaurant")
 		or die("Select statement checking if restaurant is already in the database: ". pg_last_error());
@@ -75,45 +70,62 @@
 		print_r($restArr);
 
 		echo "<br><BR>".$restArr[0]['name']."<BR><BR>";
+		echo "<br><BR>".$restArr[1]['name']."<BR><BR>";
 		
 
 		for( $i = 0; $i < sizeof($obj['results']); $i++)
 		{
-			if($
-		}
 
+			$restLat = $obj['results'][$i]['geometry']['location']['lat'];
+			$restLng = $obj['results'][$i]['geometry']['location']['lng'];
+			$restName = $obj['results'][$i]['name'];
+			$placeID = $obj['results'][$i]['place_id'];	
 
-
-		if($rows === 0)
-		{
-			pg_prepare($dbconn, "insertRestaurant", "INSERT INTO Restaurant(rid,name) VALUES(DEFAULT,$1)") 
-				or die("Prepare for inserting into restaurant table failed: ". pg_last_error());
-	
-			$insertRestResult = pg_execute($dbconn,"insertRestaurant", array($restName))
-				or die ("Insert Execute into restaurant table failed: ". pg_last_error());
 			
 
-
-			pg_prepare($dbconn,"grab_rid", "Select rid FROM Restaurant WHERE name = $1")
-				or die("Select statement checking if restaurant is already in the database: ". pg_last_error());
+			$inDB = false;
+			for($j = 0; $j < sizeof($restArr); $j++)
+			{
+				if($restArr[$j]['name'] == $restName)
+				{
+					$inDB = true;
+								
+				}
 	
-			$restResult = pg_execute($dbconn,"grab_rid", array($restName))
-				or die("Select execute for restaurant check failed: ". pg_last_error());
+			}
+			if($inDB = false)
+			{
+
+				pg_prepare($dbconn, "insertRestaurant_$i", "INSERT INTO Restaurant(rid,name) VALUES(DEFAULT,$1)") 
+						or die("Prepare for inserting into restaurant table failed: ". pg_last_error());
+	
+				$insertRestResult = pg_execute($dbconn,"insertRestaurant_$i", array($restName))
+						or die ("Insert Execute into restaurant table failed: ". pg_last_error());
+			
+				pg_prepare($dbconn,"grab_rid_$i", "Select rid FROM Restaurant WHERE name = $1")
+						or die("Select statement checking if restaurant is already in the database: ". pg_last_error());
+	
+				$ridSearch = pg_execute($dbconn,"grab_rid_$i", array($restName))
+						or die("Select execute for restaurant check failed: ". pg_last_error());
 						
+
+				$ridArray = pg_fetch_array($ridSearch, 0, PGSQL_NUM);
+				$rid = reset($ridArray);
+
+				pg_prepare($dbconn,"insertPlace_$i", "INSERT INTO Place(pid,rid,loc) VALUES ($1,$2,ST_GeomFromText($3))")
+					or die("Prepare for insertPlace failed: ". pg_last_error());
+		
+				$geom = "POINT(" . $restLat. " ". $restLng. ")', 4326)";
+		
+				$placeResult = pg_execute($dbconn,"insertPlace_$i",array($placeID,$rid,$theGeom)) 		
+					or die("Insert execute for Place table failed: ". pg_last_error());
+   
+						
+			}	
 		}
 
-	
-		$ridArray = pg_fetch_array($restResult, 0, PGSQL_NUM);
-		$rid = reset($ridArray);
 
-		pg_prepare($dbconn,"insertPlace", "INSERT INTO Place(pid,rid,loc) VALUES ($1,$2,ST_GeomFromText($3))")
-			or die("Prepare for insertPlace failed: ". pg_last_error());
-		
-		$geom = "POINT(" . $restLat. " ". $restLng. ")', 4326)";
-		
-		$placeResult = pg_execute($dbconn,"insertPlace",array($placeID,$rid,$theGeom)) 		
-			or die("Insert execute for Place table failed: ". pg_last_error());
-   
+	
 
 			
 
