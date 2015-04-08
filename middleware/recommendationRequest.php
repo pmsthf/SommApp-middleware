@@ -15,7 +15,7 @@
 		$arr = array(
 
 			array('name' => 'Chipotle', 'latitude' => 2, 'longitude' => 3, 'address' => ''),
-			array('name' => 'TacoBell', 'latitude' => 2, 'longitude' => 3, 'address' => ''));
+			array('name' => 'TacoBell', 'latitude' => 2, 'longitude' => 3, 'address' => '')
 
 			);
 
