@@ -12,15 +12,19 @@
 
 
 
-		$arr = array('name' => 'Chipotle', 'latitude' => 2, 'longitude' => 3, 'address' => '');
+		$arr = array(
+
+			array('name' => 'Chipotle', 'latitude' => 2, 'longitude' => 3, 'address' => ''),
+			array('name' => 'TacoBell', 'latitude' => 2, 'longitude' => 3, 'address' => ''));
+
+			);
 
 		echo json_encode($arr);
 
 
 	} else {
 		echo '{"success":0}';
-
-
+	
 	}
 	fclose($fh);
 
