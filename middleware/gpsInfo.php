@@ -12,7 +12,10 @@
 
 		$stringData = "\nTime: ". $time ."\nEmail: " . $email. "\nCoords". $coords."\n";
 		fwrite($fh, $stringData);
-
+		
+		echo $time . "<br>";
+		echo $email . " <br>";
+		echo $coords . " <br>";
 		echo "YES";
 	}
 	fclose($fh);

@@ -1,7 +1,9 @@
 <?php
 
 	require('../database.php');
-	
+	require('../recServer.php');
+
+	define(:);	
 	$dbconn = pg_connect(HOST." ".PORT." ".DBNAME." ".USERNAME." ".PASSWORD);	
 
 	$key = "AIzaSyCmM8yC1X_fOgLqv5TV2nPaXxgPuBGyRmc";
@@ -9,7 +11,11 @@
 	$email = $_POST['email'];
 	$distance = $_POST['distance'];	
 	$coords = explode(",",$gps);
-	
+	$start_time = $_POST['start_time'];
+	$end_time = $_POST['end_time'];
+
+	$duration = strtotime($end_time) - strtotime($start_time);
+
 	$lat =$coords[0];
 	$lng = $coords[1];
 
@@ -93,7 +99,7 @@
 				}
 	
 			}
-			if($inDB = false)
+			if($inDB == false)
 			{
 
 				pg_prepare($dbconn, "insertRestaurant_$i", "INSERT INTO Restaurant(rid,name) VALUES(DEFAULT,$1)") 
@@ -123,12 +129,52 @@
 						
 			}	
 		}
-
-
 	
 
-			
 
+
+
+
+
+	$closest = $obj['results'][0]['name'];
+	
+		//$restName = $obj['results'][$i]['name'];	
+	echo "RESTAURANT THEY ARE AT: " . $closest;
+	//echo "<BR><BR><BR>NAME: ". print_r($obj_2['results']);
+
+	pg_prepare($dbconn,"grab_rest_rid","SELECT rid FROM Restaurant WHERE name = $1")
+			or die("PREPARE STATEMENT FOR GRABBING RID FAILED: " . pg_last_error());
+	$restRidResult = pg_execute($dbconn,"grab_rest_rid", array($closest))
+			or die("EXECUTE STATEMENT FOR GRABBING RID FAILED: " . pg_last_error());
+
+
+	echo "<br>restID = ";
+	$restRidArray = pg_fetch_array($restRidResult, 0, PGSQL_NUM);
+        $rid = reset($restRidArray);
+	echo $rid;
+	pg_prepare($dbconn,"grab_user_id","SELECT user_id FROM user_info WHERE email = $1")
+			or die("PREPARE STATEMENT FOR GRABBING user id FAILED: " . pg_last_error());
+	$userIdResult = pg_execute($dbconn,"grab_user_id", array($email))
+			or die("EXECUTE STATEMENT FOR GRABBING user id FAILED: " . pg_last_error());
+
+	$userIdArray = pg_fetch_array($userIdResult, 0, PGSQL_NUM);
+        $userid = reset($userIdArray);
+
+	echo "<BR>USER ID: " . $userid;
+
+	echo "<BR>DURATION: " . $duration;
+
+
+	$recommendationUrl = IP . ':8080/visit/restaurant/' . $userId . '/' . $rid . '/' . $duration;
+	$opts = array('http' => 
+			array(
+				'method' => 'POST', 
+				'header' => 'Content-type: application/x-www-form-urlencoded'
+			));
+
+	$context = stream_context_create($opts);
+	$result = file_get_contents($recommendaitonUrl, false, $context);
+	
 
 ?>
 
