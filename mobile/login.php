@@ -47,7 +47,7 @@
 
 		
 			$maxMiles = 1;
-			$maxMiles = $json_encode($maxMiles);	
+//			$maxMiles = $json_encode($maxMiles);	
 
 
 
