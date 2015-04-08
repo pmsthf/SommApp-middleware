@@ -41,8 +41,12 @@
 			$line = pg_fetch_array($firstnameResult, null, PGSQL_ASSOC);
 			$firstname = $line['firstname'];
 			$firstname = json_encode($line['firstname']);
-	
-			echo '{"success":1, "firstname":'.$firstname.'}';
+
+			$maxMiles = 1
+			//also need to return the maximum miles this user wants restaurants from (needs to be set to default # in database)
+
+
+			echo '{"success":1, "firstname":'.$firstname.'."maxMiles":'.$maxMiles.'}';
 					
 		}
 		else
