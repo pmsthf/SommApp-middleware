@@ -1,6 +1,6 @@
 <?php
 	header('Content-type: application/json');
-	$myFile = "test.txt";
+	$myFile = "settings.txt";
 	$fh = fopen($myFile, 'a') or die("can't open file");
 
 
@@ -16,7 +16,11 @@
 		$stringData = "\nTime: ". $time ."\nEmail: " . $email. "\n New name: " . $name. "\nNew password". $password."\n". "New Miles". $miles."\n";
 		fwrite($fh, $stringData);
 
-		echo "YES";
+		echo '{"success":1}';
+		
+	} else {
+		echo '{"success":0}';
+		
 	}
 	fclose($fh);
 
