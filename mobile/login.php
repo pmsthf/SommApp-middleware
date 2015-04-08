@@ -45,14 +45,10 @@
 	
 
 
-		
-
-
-
 			//also need to return the maximum miles this user wants restaurants from (needs to be set to default # in database)
 
 
-			echo '{"success":1, "firstname":'.$firstname.'."maxMiles":'.$maxMiles.'}';
+			echo '{"success":1, "firstname":'.$firstname.'"maxMiles":'.$maxMiles.'}';
 					
 		}
 		else
