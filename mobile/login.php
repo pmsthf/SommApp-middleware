@@ -35,7 +35,7 @@
 		
 		if($checkHash == $pwHash)
 		{
-			pg_prepare($dbconn,"get_firstname", "Select firstname FROM user_info where email = $1")
+			pg_prepare($dbconn,"get_firstname", "Select firstname, max_distance FROM user_info where email = $1")
 				or die("Prepare statement for getting user first name failed: " . pg_last_error());
 			$firstnameResult = pg_execute($dbconn,"get_firstname", array($email)) or die("Execte statement failed getting first name: " . pg_last_error());
 			$line = pg_fetch_array($firstnameResult, null, PGSQL_ASSOC);
@@ -43,7 +43,7 @@
 			$maxMiles = $line['max_distance'];
 			$firstname = json_encode($line['firstname']);
 	
-			$maxMiles = 3;
+			$maxMiles = $maxMiles * 0.00062137;
 
 			//also need to return the maximum miles this user wants restaurants from (needs to be set to default # in database)
 
