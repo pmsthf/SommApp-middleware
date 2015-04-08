@@ -43,7 +43,7 @@
 			$maxMiles = $line['max_distance'];
 			$firstname = json_encode($line['firstname']);
 	
-
+			$maxMiles = 3;
 
 			//also need to return the maximum miles this user wants restaurants from (needs to be set to default # in database)
 
