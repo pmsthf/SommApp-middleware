@@ -40,9 +40,13 @@
 			$firstnameResult = pg_execute($dbconn,"get_firstname", array($email)) or die("Execte statement failed getting first name: " . pg_last_error());
 			$line = pg_fetch_array($firstnameResult, null, PGSQL_ASSOC);
 			$firstname = $line['firstname'];
+			$maxMiles = $line['max_distance'];
 			$firstname = json_encode($line['firstname']);
+	
 
-			$maxMiles = 1
+		
+			$maxMiles = 1;
+			$maxMiles = $json_encode($maxMiles);	
 			//also need to return the maximum miles this user wants restaurants from (needs to be set to default # in database)
 
 
