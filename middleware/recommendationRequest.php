@@ -7,17 +7,20 @@
 		$time   = $_POST['time'];
 		$email = $_POST['email'];
 		$coords = $_POST['coords'];
-
-
-
 		$stringData = "\nTime: ". $time ."\nEmail: " . $email. "\n Coords: " . $coords. "\n";
 		fwrite($fh, $stringData);
 
-		echo '{"success":1}';
-		
+
+
+		$arr = array('name' => 'Chipotle', 'latitude' => 2, 'longitude' => 3, 'address' => '');
+
+		echo json_encode($arr);
+
+
 	} else {
 		echo '{"success":0}';
-		
+
+
 	}
 	fclose($fh);
 
