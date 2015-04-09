@@ -13,9 +13,9 @@
 
 
 		$arr = array(
-
-			array('name' => 'Chipotle', 'latitude' => 2, 'longitude' => 3, 'address' => ''),
-			array('name' => 'TacoBell', 'latitude' => 2, 'longitude' => 3, 'address' => '')
+			array('success' => 1),
+			array('name' => 'Chipotle', 'latitude' => 2, 'longitude' => 3, 'address' => 'a'),
+			array('name' => 'TacoBell', 'latitude' => 2, 'longitude' => 3, 'address' => 'a')
 
 			);
 
@@ -23,7 +23,14 @@
 
 
 	} else {
-		echo '{"success":0}';
+
+		
+		$arr = array(
+			array('success' => 0)
+			);
+			
+					echo json_encode($arr);
+
 	
 	}
 	fclose($fh);
