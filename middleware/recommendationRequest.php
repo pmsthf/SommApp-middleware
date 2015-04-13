@@ -14,9 +14,15 @@
 
 		$arr = array(
 			array('success' => 1),
-			array('name' => 'Chipotle', 'latitude' => 2, 'longitude' => 3, 'address' => 'a'),
-			array('name' => 'TacoBell', 'latitude' => 2, 'longitude' => 3, 'address' => 'a')
+			array('name' => 'Chipotle', 'latitude' => '38.94808', 'longitude' => '-92.3274487', 'address' => '306 S 9th St Columbia, MO 65201'),
+			array('name' => 'TacoBell', 'latitude' => '38.934833', 'longitude' => '-92.3315709', 'address' => '411 S Providence Rd Columbia, MO 65203')
 
+			);
+			
+		//if there are no new recommendations
+			
+		$arr = array(
+			array('success' => 'nonew')
 			);
 
 		echo json_encode($arr);
