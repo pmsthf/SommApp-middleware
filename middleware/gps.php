@@ -3,7 +3,7 @@
 	require('../database.php');
 	require('../recServer.php');
 
-	define(:);	
+
 	$dbconn = pg_connect(HOST." ".PORT." ".DBNAME." ".USERNAME." ".PASSWORD);	
 
 	$key = "AIzaSyCmM8yC1X_fOgLqv5TV2nPaXxgPuBGyRmc";
@@ -19,9 +19,12 @@
 	$lat =$coords[0];
 	$lng = $coords[1];
 
+	$meters = $distance/0.00062137;
 	
+	echo "distance in miles: " . $distance;
+	echo "distance in meters: " . $meters;		
 	
-	$url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$lat,$lng&radius=500&rankBy=$distance&types=restaurant&openNow=true&key=$key";
+	$url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$lat,$lng&radius=$meters&rankBy=distance&types=restaurant&openNow=true&key=$key";
 	
 	$i = 0;
 
@@ -75,20 +78,22 @@
 		$restArr = pg_fetch_all($restaurants);
 		print_r($restArr);
 
-		echo "<br><BR>".$restArr[0]['name']."<BR><BR>";
-		echo "<br><BR>".$restArr[1]['name']."<BR><BR>";
+	
+
+
 		
+		echo "<BR><BR><BR><BR>SIZE OF restARR : ".sizeof($restArr) . "<BR><BR><BR><BR>";	
 
 		for( $i = 0; $i < sizeof($obj['results']); $i++)
 		{
-
+			
 			$restLat = $obj['results'][$i]['geometry']['location']['lat'];
 			$restLng = $obj['results'][$i]['geometry']['location']['lng'];
+		
 			$restName = $obj['results'][$i]['name'];
 			$placeID = $obj['results'][$i]['place_id'];	
-
 			
-
+		
 			$inDB = false;
 			for($j = 0; $j < sizeof($restArr); $j++)
 			{
@@ -123,14 +128,12 @@
 		
 				$geom = "POINT(" . $restLat. " ". $restLng. ")', 4326)";
 		
-				$placeResult = pg_execute($dbconn,"insertPlace_$i",array($placeID,$rid,$theGeom)) 		
+				$placeResult = pg_execute($dbconn,"insertPlace_$i",array($placeID,$rid,$geom)) 		
 					or die("Insert execute for Place table failed: ". pg_last_error());
    
 						
 			}	
 		}
-	
-
 
 
 

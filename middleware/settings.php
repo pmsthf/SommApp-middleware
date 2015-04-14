@@ -12,6 +12,9 @@
 		$password = $_POST['password'];
 		$miles = $_POST['miles'];
 
+		
+
+		
 
 		$stringData = "\nTime: ". $time ."\nEmail: " . $email. "\n New name: " . $name. "\nNew password". $password."\n". "New Miles". $miles."\n";
 		fwrite($fh, $stringData);
