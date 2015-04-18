@@ -1,17 +1,48 @@
 <?php
+	require('../database.php');
+	require('../recServer.php');
+	
+
+
 	header('Content-type: application/json');
-	$myFile = "reccomendation.txt";
-	$fh = fopen($myFile, 'a') or die("can't open file");
 
-	if($_POST) {
-		$time   = $_POST['time'];
+
+		$dbconn = pg_connect(HOST." ".PORT." ".DBNAME." ".USERNAME." ".PASSWORD);	
+		
+		$key = "AIzaSyCmM8yC1X_fOgLqv5TV2nPaXxgPuBGyRmc";
+		
 		$email = $_POST['email'];
-		$coords = $_POST['coords'];
-		$stringData = "\nTime: ". $time ."\nEmail: " . $email. "\n Coords: " . $coords. "\n";
-		fwrite($fh, $stringData);
+		$gps = $_POST['gps'];
+		$coords = explode(",",$gps);
+		$lat = $coords[0];
+		$lng = $coords[1];
+
+
+		pg_prepare($dbconn, "grab_user_info", "Select user_id, max_distance FROM user_info WHERE email = $1")
+			or die("PREPARE STATEMENT for grabbing distance failed: " . pg_last_error());
+		$result = pg_execute($dbconn,"grab_user_info",array($email))
+			or die("Execute statement for grabbing distance failed: " . pg_last_error());
+
+
+		$info = pg_fetch_all($result);
+		$meters = $info[0]['max_distance'];	
+		$url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$lat,$lng&radius=$meters&rankBy=distance&types=restaurant&openNow=true&key=$key";
+			
+		$userId = $info[0]['user_id'];
 
 
 
+
+
+		$recUrl = IP . ':8080/restaurant/recommendation/' . $userId;
+
+		
+		$json = file_get_contents($recUrl);
+		$recs = json_decode($json);
+		print_r($recs);
+		
+
+/*
 		$arr = array(
 			array('success' => 1),
 			array('name' => 'Chipotle', 'latitude' => '38.94808', 'longitude' => '-92.3274487', 'address' => '306 S 9th St Columbia, MO 65201'),
@@ -40,5 +71,5 @@
 	
 	}
 	fclose($fh);
-
+*/
 ?>
