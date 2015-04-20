@@ -26,40 +26,121 @@
 
 		$info = pg_fetch_all($result);
 		$meters = $info[0]['max_distance'];	
-		$url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$lat,$lng&radius=$meters&rankBy=distance&types=restaurant&openNow=true&key=$key";
-			
+
+
+		$url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$lat,$lng&radius=$meters&rankBy=distance&types=restaurant&openNow=true&key=$key";		
+	
 		$userId = $info[0]['user_id'];
 
 
 
 
 
-		$recUrl = IP . ':8080/restaurant/recommendation/' . $userId;
+		$recUrl = IP . ':8080/restaurant/recommend/' . $userId;
 
 		
 		$json = file_get_contents($recUrl);
-		$recs = json_decode($json);
+		echo "<BR><BR><BR>Json<BR><BR>";
+		print_r($json);
+		
+		echo "<BR><BR><BR>Non Json<BR><BR>";
+		$recs = json_decode($json, true);
 		print_r($recs);
 		
+		echo "<BR><BR><BR>item ID<BR><BR>";
+		print_r($recs[1]['itemId']);
 
-/*
+		pg_prepare($dbconn,"grab_rid","Select name From restaurant where rid = $1 OR rid = $2 OR rid = $3 OR rid = $4 OR rid = $5 OR rid = $6 OR rid = $7 OR rid = $8 OR rid = $9 OR rid = $10 OR rid = $11 OR rid = $12 OR rid = $13 OR rid = $14 ")
+			or die("prepare statement for grabbing rid failed: " . pg_last_error());
+		
+		$rid = pg_execute($dbconn,"grab_rid",array($recs[0]['itemId'],$recs[1]['itemId'],$recs[2]['itemId'],$recs[3]['itemId'],$recs[4]['itemId'],$recs[5]['itemId'],$recs[6]['itemId'],$recs[7]['itemId'],$recs[8]['itemId'],$recs[9]['itemId'],$recs[10]['itemId'],$recs[11]['itemId'],$recs[12]['itemId'],$recs[13]['itemId']))
+			or die("pg_execute for grabbing rids failed: ". pg_last_error());
+
+		echo "<BR><BR><BR>";
+		$ridArray = pg_fetch_all($rid);
+		print_r($ridArray);	
+
+
+		$google = file_get_contents($url);
+		$obj = json_decode($google,true);
+		
+		$k = 0;
+		for($i = 0; $i < sizeof($obj['results']); $i++)
+		{
+			for($j = 0; $j < sizeof($ridArray);$j++)
+			{
+				if($ridArray[$j]['name'] == $obj['results'][$i]['name'])
+				{
+				
+			 
+					$recNameArray[$k] = $obj['results'][$i]['name'];
+					$recLatArray[$k] = $obj['results'][$i]['geometry']['location']['lat'];
+					$recLngArray[$k] = $obj['results'][$i]['geometry']['location']['lng'];
+				
+					$k++;
+				}
+			}
+		}
+
+		
+	
+
+		$uniqueRecNameArray = array_unique($recNameArray);
+		echo "<BR><BR>". sizeof($recNameArray). "<BR><BR>";
+		$j = 0;
+		$finalArray[$j]['success'] = 1;
+		for($i = 0; $i < sizeof($recNameArray); $i++)
+		{
+			if($uniqueRecNameArray[$i] == "")
+			{
+			}
+			else{
+				//$finalRestName[$j] = $uniqueRecNameArray[$i];
+				//$finalLat[$j] = $recLatArray[$i];
+				//$finalLng[$j] = $recLngArray[$i];
+				$finalArray[$j+1]['name'] = $uniqueRecNameArray[$i];
+				$finalArray[$j+1]['latitude'] = $recLatArray[$i];
+				$finalArray[$j+1]['longitude'] = $recLngArray[$i];
+				
+				$j++;
+			}
+		}
+
+
+		$json = json_encode($finalArray);
+
+
+		echo $json;
+
+
+		
+
+
+
+
 		$arr = array(
 			array('success' => 1),
-			array('name' => 'Chipotle', 'latitude' => '38.94808', 'longitude' => '-92.3274487', 'address' => '306 S 9th St Columbia, MO 65201'),
-			array('name' => 'TacoBell', 'latitude' => '38.934833', 'longitude' => '-92.3315709', 'address' => '411 S Providence Rd Columbia, MO 65203')
-
-			);
 			
+	
+			array('name' => 'Chipotle', 'latitude' => '123', 'longitude' => '890', 'address' => '306 S 9th St Columbia, MO 65201'),
+				
+				
+			array('name' => 'SubWay', 'latitude' => '000', 'longitude' => '999', 'address' => '1000 St Columbia, MO 65201')
+					
+		);			
+			
+				
 		//if there are no new recommendations
 			
-		$arr = array(
-			array('success' => 'nonew')
-			);
+	///	$arr = array(
+	//		array('success' => 'nonew')
+	//
+	//	);
 
-		echo json_encode($arr);
 
+	
 
-	} else {
+/*	} else {
 
 		
 		$arr = array(
@@ -70,6 +151,6 @@
 
 	
 	}
-	fclose($fh);
 */
+
 ?>

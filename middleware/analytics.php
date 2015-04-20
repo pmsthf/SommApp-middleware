@@ -24,7 +24,7 @@
 		
 	$json = file_get_contents($aUrl);
 	$anal = json_decode($json);
-//	print_r($anal);
+	print_r($json);
 
 /*	echo "<BR><BR><BR>";
 	//echo $anal[0]['restaurantId'];
