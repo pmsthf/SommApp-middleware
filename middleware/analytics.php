@@ -6,7 +6,7 @@
 
 	header('Content-type:application/json');
 	
-	$name = $_POST['restName'];
+	$name = $_POST['restaurantName'];
 
 	$dbconn = pg_connect(HOST." ".PORT." ".DBNAME." ".USERNAME." ".PASSWORD);
 
@@ -23,9 +23,11 @@
 	$aUrl = IP . ':8080/restaurant/analytics/'. $rid;
 		
 	$json = file_get_contents($aUrl);
-	$anal = json_decode($json);
+	$anal = json_decode($json,true);
+
 	print_r($json);
 
+	
 /*	echo "<BR><BR><BR>";
 	//echo $anal[0]['restaurantId'];
 
