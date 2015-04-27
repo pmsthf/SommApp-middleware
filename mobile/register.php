@@ -7,7 +7,7 @@
 	$password = $_POST['password'];
 	$email = $_POST['email'];
 	$firstname = $_POST['name'];
-	$max_distance = 500;
+	$max_distance = 1609;
 	mt_srand();
 	$salt = mt_rand();
 

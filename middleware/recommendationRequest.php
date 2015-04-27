@@ -93,8 +93,8 @@
 			}
 			else{
 				$finalArray[$j+1]['name'] = $uniqueRecNameArray[$i];
-				$finalArray[$j+1]['latitude'] = $recLatArray[$i];
-				$finalArray[$j+1]['longitude'] = $recLngArray[$i];
+				$finalArray[$j+1]['latitude'] = strval($recLatArray[$i]);
+				$finalArray[$j+1]['longitude'] = strval($recLngArray[$i]);
 		
 				$shortAddress = explode(", USA",$address[$i]);
 			
